@@ -1,0 +1,3900 @@
+{
+  "manifest_schema_version": 3,
+  "sdk_version": "5.11.0",
+  "app_id": "ivanti-connector",
+  "version": "0.1.0",
+  "name": "Ivanti",
+  "description": "Connect your own Ivanti Service Manager (ISM) / Neurons for ITSM tenant to manage Incidents, Service Requests, Problems, Changes, Configuration Items, and Knowledge Articles through the OData Business Object API, plus a generic BO passthrough.",
+  "icon": "icon.svg",
+  "actions_explicit": true,
+  "system": false,
+  "capabilities": [
+    "ivanti:read",
+    "ivanti:write"
+  ],
+  "tools": [
+    {
+      "name": "connect_ivanti",
+      "description": "Connect an Ivanti Service Manager (ISM) tenant via OAuth2 or Basic Auth, after validating connectivity.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "ivanti.provider.connected"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "label": {
+            "default": "",
+            "description": "Friendly tenant label, e.g. 'Acme Production'.",
+            "title": "Label",
+            "type": "string"
+          },
+          "host": {
+            "description": "Ivanti ISM tenant host, e.g. 'https://acme.ivanticloud.com' (cloud) or 'https://host' (on-prem).",
+            "title": "Host",
+            "type": "string"
+          },
+          "auth_mode": {
+            "default": "basic",
+            "description": "Authentication mode: 'oauth2' (Ivanti Identity Broker, cloud) or 'basic' (service account, on-prem/legacy).",
+            "title": "Auth Mode",
+            "type": "string"
+          },
+          "username": {
+            "default": "",
+            "description": "Service account username. Required when auth_mode is 'basic'.",
+            "title": "Username",
+            "type": "string"
+          },
+          "password": {
+            "default": "",
+            "description": "Service account password. Required when auth_mode is 'basic'.",
+            "title": "Password",
+            "type": "string"
+          },
+          "client_id": {
+            "default": "",
+            "description": "OAuth2 client id. Required when auth_mode is 'oauth2'.",
+            "title": "Client Id",
+            "type": "string"
+          },
+          "client_secret": {
+            "default": "",
+            "description": "OAuth2 client secret. Required when auth_mode is 'oauth2'.",
+            "title": "Client Secret",
+            "type": "string"
+          },
+          "token_url": {
+            "default": "",
+            "description": "Optional OAuth2 token URL override. Defaults to '<host>/oauth/token'.",
+            "title": "Token Url",
+            "type": "string"
+          }
+        },
+        "required": [
+          "host"
+        ],
+        "title": "ConnectIvantiParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "label": {
+            "default": "",
+            "title": "Label",
+            "type": "string"
+          },
+          "host": {
+            "default": "",
+            "title": "Host",
+            "type": "string"
+          },
+          "auth_mode": {
+            "default": "basic",
+            "title": "Auth Mode",
+            "type": "string"
+          },
+          "connected": {
+            "default": true,
+            "title": "Connected",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "IvantiConnection",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.connect_ivanti",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "disconnect_ivanti",
+      "description": "Remove a saved Ivanti tenant connection.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "ivanti.provider.disconnected"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "description": "Saved Ivanti connection ID to remove from Imperal.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "connection_id"
+        ],
+        "title": "DisconnectIvantiParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "deleted": {
+            "default": true,
+            "title": "Deleted",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "DeleteResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.disconnect_ivanti",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "list_connections",
+      "description": "List all connected Ivanti tenants.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {},
+        "title": "NoParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "IvantiConnection": {
+            "properties": {
+              "id": {
+                "title": "Id",
+                "type": "string"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "label": {
+                "default": "",
+                "title": "Label",
+                "type": "string"
+              },
+              "host": {
+                "default": "",
+                "title": "Host",
+                "type": "string"
+              },
+              "auth_mode": {
+                "default": "basic",
+                "title": "Auth Mode",
+                "type": "string"
+              },
+              "connected": {
+                "default": true,
+                "title": "Connected",
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "id",
+              "title"
+            ],
+            "title": "IvantiConnection",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "connections",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "Ivanti connections",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "connections": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/IvantiConnection"
+            },
+            "title": "Connections",
+            "type": "array"
+          }
+        },
+        "title": "ConnectionList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.list_connections",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "list_incidents",
+      "description": "List incidents on the connected Ivanti tenant, optionally filtered by an OData expression.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "odata_filter": {
+            "default": "",
+            "description": "Optional OData $filter expression, e.g. \"Status eq 'Open'\".",
+            "title": "Odata Filter",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Max records to return.",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListIncidentsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "Incident": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "default": "",
+                "title": "Status",
+                "type": "string"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "rec_id": {
+                "title": "Rec Id",
+                "type": "string"
+              },
+              "subject": {
+                "default": "",
+                "title": "Subject",
+                "type": "string"
+              },
+              "urgency": {
+                "default": "",
+                "title": "Urgency",
+                "type": "string"
+              },
+              "raw": {
+                "additionalProperties": true,
+                "default": {},
+                "title": "Raw",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "rec_id"
+            ],
+            "title": "Incident",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "incidents",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "Incidents",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "incidents": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/Incident"
+            },
+            "title": "Incidents",
+            "type": "array"
+          }
+        },
+        "title": "IncidentList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.list_incidents",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "get_incident",
+      "description": "Read one incident in full by record id.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "rec_id": {
+            "description": "Business Object record id (RecId), e.g. 'INC0012345'.",
+            "title": "Rec Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rec_id"
+        ],
+        "title": "RecIdParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "subject": {
+            "default": "",
+            "title": "Subject",
+            "type": "string"
+          },
+          "urgency": {
+            "default": "",
+            "title": "Urgency",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "Incident",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.get_incident",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "create_incident",
+      "description": "Create a new incident.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "create:incident"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "Business Object field name/value pairs for the new incident, e.g. {'Subject': '...', 'Urgency': 'High'}.",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "values"
+        ],
+        "title": "CreateIncidentParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "subject": {
+            "default": "",
+            "title": "Subject",
+            "type": "string"
+          },
+          "urgency": {
+            "default": "",
+            "title": "Urgency",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "Incident",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.create_incident",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "update_incident",
+      "description": "Update selected fields of an existing incident. Only given fields are changed.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "update:incident"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "rec_id": {
+            "description": "Business Object record id (RecId), e.g. 'INC0012345'.",
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "Business Object field name/value pairs to update, e.g. {'Status': 'Resolved'}.",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "rec_id",
+          "values"
+        ],
+        "title": "UpdateIncidentParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "subject": {
+            "default": "",
+            "title": "Subject",
+            "type": "string"
+          },
+          "urgency": {
+            "default": "",
+            "title": "Urgency",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "Incident",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.update_incident",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "list_service_requests",
+      "description": "List service requests on the connected Ivanti tenant.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "odata_filter": {
+            "default": "",
+            "description": "Optional OData $filter expression.",
+            "title": "Odata Filter",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Max records to return.",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListServiceRequestsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ServiceRequest": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "default": "",
+                "title": "Status",
+                "type": "string"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "rec_id": {
+                "title": "Rec Id",
+                "type": "string"
+              },
+              "subject": {
+                "default": "",
+                "title": "Subject",
+                "type": "string"
+              },
+              "raw": {
+                "additionalProperties": true,
+                "default": {},
+                "title": "Raw",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "rec_id"
+            ],
+            "title": "ServiceRequest",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "requests",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "Service requests",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "requests": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/ServiceRequest"
+            },
+            "title": "Requests",
+            "type": "array"
+          }
+        },
+        "title": "ServiceRequestList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.list_service_requests",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "get_service_request",
+      "description": "Read one service request in full by record id.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "rec_id": {
+            "description": "Business Object record id (RecId), e.g. 'INC0012345'.",
+            "title": "Rec Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "rec_id"
+        ],
+        "title": "RecIdParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "subject": {
+            "default": "",
+            "title": "Subject",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "ServiceRequest",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.get_service_request",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "create_service_request",
+      "description": "Create a new service request.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "create:service_request"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "Business Object field name/value pairs for the new service request.",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "values"
+        ],
+        "title": "CreateServiceRequestParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "subject": {
+            "default": "",
+            "title": "Subject",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "ServiceRequest",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.create_service_request",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "update_service_request",
+      "description": "Update selected fields of an existing service request.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "update:service_request"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "rec_id": {
+            "description": "Business Object record id (RecId), e.g. 'INC0012345'.",
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "Business Object field name/value pairs to update.",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "rec_id",
+          "values"
+        ],
+        "title": "UpdateServiceRequestParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "subject": {
+            "default": "",
+            "title": "Subject",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "ServiceRequest",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.update_service_request",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "list_problems",
+      "description": "List problems on the connected Ivanti tenant.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "odata_filter": {
+            "default": "",
+            "description": "Optional OData $filter expression.",
+            "title": "Odata Filter",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Max records to return.",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListProblemsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "Problem": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "default": "",
+                "title": "Status",
+                "type": "string"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "rec_id": {
+                "title": "Rec Id",
+                "type": "string"
+              },
+              "subject": {
+                "default": "",
+                "title": "Subject",
+                "type": "string"
+              },
+              "raw": {
+                "additionalProperties": true,
+                "default": {},
+                "title": "Raw",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "rec_id"
+            ],
+            "title": "Problem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "problems",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "Problems",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "problems": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/Problem"
+            },
+            "title": "Problems",
+            "type": "array"
+          }
+        },
+        "title": "ProblemList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.list_problems",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "create_problem",
+      "description": "Create a new problem record.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "create:problem"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "Business Object field name/value pairs for the new problem.",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "values"
+        ],
+        "title": "CreateProblemParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "subject": {
+            "default": "",
+            "title": "Subject",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "Problem",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.create_problem",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "update_problem",
+      "description": "Update selected fields of an existing problem.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "update:problem"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "rec_id": {
+            "description": "Business Object record id (RecId), e.g. 'INC0012345'.",
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "Business Object field name/value pairs to update.",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "rec_id",
+          "values"
+        ],
+        "title": "UpdateProblemParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "subject": {
+            "default": "",
+            "title": "Subject",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "Problem",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.update_problem",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "list_changes",
+      "description": "List change requests on the connected Ivanti tenant.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "odata_filter": {
+            "default": "",
+            "description": "Optional OData $filter expression.",
+            "title": "Odata Filter",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Max records to return.",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListChangesParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ChangeRequest": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "default": "",
+                "title": "Status",
+                "type": "string"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "rec_id": {
+                "title": "Rec Id",
+                "type": "string"
+              },
+              "subject": {
+                "default": "",
+                "title": "Subject",
+                "type": "string"
+              },
+              "raw": {
+                "additionalProperties": true,
+                "default": {},
+                "title": "Raw",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "rec_id"
+            ],
+            "title": "ChangeRequest",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "changes",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "Change requests",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "changes": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/ChangeRequest"
+            },
+            "title": "Changes",
+            "type": "array"
+          }
+        },
+        "title": "ChangeRequestList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.list_changes",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "create_change",
+      "description": "Create a new change request.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "create:change"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "Business Object field name/value pairs for the new change request.",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "values"
+        ],
+        "title": "CreateChangeParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "subject": {
+            "default": "",
+            "title": "Subject",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "ChangeRequest",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.create_change",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "update_change",
+      "description": "Update selected fields of an existing change request.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "update:change"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "rec_id": {
+            "description": "Business Object record id (RecId), e.g. 'INC0012345'.",
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "Business Object field name/value pairs to update.",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "rec_id",
+          "values"
+        ],
+        "title": "UpdateChangeParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "default": "",
+            "title": "Status",
+            "type": "string"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "subject": {
+            "default": "",
+            "title": "Subject",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "ChangeRequest",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.update_change",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "list_cmdb_cis",
+      "description": "List Configuration Items (CIs) from the Ivanti CMDB, optionally filtered.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "odata_filter": {
+            "default": "",
+            "description": "Optional OData $filter expression, e.g. \"CIType eq 'Server'\".",
+            "title": "Odata Filter",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Max records to return.",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListCIsParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "ConfigItem": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "default": "",
+                "title": "Status",
+                "type": "string"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "rec_id": {
+                "title": "Rec Id",
+                "type": "string"
+              },
+              "ci_type": {
+                "default": "",
+                "title": "Ci Type",
+                "type": "string"
+              },
+              "raw": {
+                "additionalProperties": true,
+                "default": {},
+                "title": "Raw",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "rec_id"
+            ],
+            "title": "ConfigItem",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "cis",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "Configuration items",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "items": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/ConfigItem"
+            },
+            "title": "Items",
+            "type": "array"
+          }
+        },
+        "title": "ConfigItemList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.list_cmdb_cis",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "list_knowledge_articles",
+      "description": "List knowledge base articles on the connected Ivanti tenant.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Max records to return.",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "title": "ListKnowledgeParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "KnowledgeArticle": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "rec_id": {
+                "title": "Rec Id",
+                "type": "string"
+              },
+              "raw": {
+                "additionalProperties": true,
+                "default": {},
+                "title": "Raw",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "rec_id"
+            ],
+            "title": "KnowledgeArticle",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "knowledge",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "Knowledge articles",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "articles": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/KnowledgeArticle"
+            },
+            "title": "Articles",
+            "type": "array"
+          }
+        },
+        "title": "KnowledgeArticleList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.list_knowledge_articles",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "list_table",
+      "description": "List records from any Ivanti Business Object by name -- a generic passthrough for objects not covered by typed wrappers.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "bo_name": {
+            "description": "Exact Ivanti Business Object name, e.g. 'Incident#'.",
+            "title": "Bo Name",
+            "type": "string"
+          },
+          "odata_filter": {
+            "default": "",
+            "description": "Optional OData $filter expression.",
+            "title": "Odata Filter",
+            "type": "string"
+          },
+          "limit": {
+            "default": 50,
+            "description": "Max records to return.",
+            "title": "Limit",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "bo_name"
+        ],
+        "title": "GenericBOParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "$defs": {
+          "GenericRecord": {
+            "properties": {
+              "id": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "integer"
+                  }
+                ],
+                "title": "Id"
+              },
+              "title": {
+                "title": "Title",
+                "type": "string"
+              },
+              "kind": {
+                "default": "",
+                "title": "Kind",
+                "type": "string"
+              },
+              "subtitle": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Subtitle"
+              },
+              "description": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Description"
+              },
+              "status": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Status"
+              },
+              "url": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "default": null,
+                "title": "Url"
+              },
+              "rec_id": {
+                "title": "Rec Id",
+                "type": "string"
+              },
+              "raw": {
+                "additionalProperties": true,
+                "default": {},
+                "title": "Raw",
+                "type": "object"
+              }
+            },
+            "required": [
+              "id",
+              "title",
+              "rec_id"
+            ],
+            "title": "GenericRecord",
+            "type": "object",
+            "x-sdl": "entity"
+          }
+        },
+        "properties": {
+          "id": {
+            "default": "records",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "Records",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "records": {
+            "default": [],
+            "items": {
+              "$ref": "#/$defs/GenericRecord"
+            },
+            "title": "Records",
+            "type": "array"
+          }
+        },
+        "title": "GenericRecordList",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.list_table",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "get_record",
+      "description": "Read one record from any Ivanti Business Object by record id.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "bo_name": {
+            "description": "Exact Ivanti Business Object name.",
+            "title": "Bo Name",
+            "type": "string"
+          },
+          "rec_id": {
+            "description": "Record id (RecId).",
+            "title": "Rec Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bo_name",
+          "rec_id"
+        ],
+        "title": "GenericRecordParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "GenericRecord",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.get_record",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "create_record",
+      "description": "Create a new record on any Ivanti Business Object -- a generic passthrough for objects not covered by typed wrappers.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "create:record"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "bo_name": {
+            "description": "Exact Ivanti Business Object name.",
+            "title": "Bo Name",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "Field name/value pairs for the new record.",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "bo_name",
+          "values"
+        ],
+        "title": "GenericCreateParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "GenericRecord",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.create_record",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "update_record",
+      "description": "Update fields on any Ivanti Business Object record by id.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "update:record"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "bo_name": {
+            "description": "Exact Ivanti Business Object name.",
+            "title": "Bo Name",
+            "type": "string"
+          },
+          "rec_id": {
+            "description": "Record id (RecId).",
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "values": {
+            "additionalProperties": true,
+            "description": "Field name/value pairs to update.",
+            "title": "Values",
+            "type": "object"
+          }
+        },
+        "required": [
+          "bo_name",
+          "rec_id",
+          "values"
+        ],
+        "title": "GenericUpdateParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "integer"
+              }
+            ],
+            "title": "Id"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "rec_id": {
+            "title": "Rec Id",
+            "type": "string"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "rec_id"
+        ],
+        "title": "GenericRecord",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.update_record",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "delete_record",
+      "description": "Delete a record from any Ivanti Business Object by id. Irreversible.",
+      "action_type": "write",
+      "chain_callable": true,
+      "effects": [
+        "delete:record"
+      ],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          },
+          "bo_name": {
+            "description": "Exact Ivanti Business Object name.",
+            "title": "Bo Name",
+            "type": "string"
+          },
+          "rec_id": {
+            "description": "Record id (RecId).",
+            "title": "Rec Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "bo_name",
+          "rec_id"
+        ],
+        "title": "GenericRecordParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "deleted": {
+            "default": true,
+            "title": "Deleted",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "title"
+        ],
+        "title": "DeleteResult",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.delete_record",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    },
+    {
+      "name": "audit_instance_health",
+      "description": "Build one aggregated health report across the connected Ivanti tenant: open incidents, service requests, problems, and changes.",
+      "action_type": "read",
+      "chain_callable": true,
+      "effects": [],
+      "id_projection": "",
+      "params_schema": {
+        "properties": {
+          "connection_id": {
+            "default": "",
+            "description": "Optional saved Ivanti connection ID. Omit to use the first connected tenant.",
+            "title": "Connection Id",
+            "type": "string"
+          }
+        },
+        "title": "AuditHealthParams",
+        "type": "object"
+      },
+      "return_schema": {
+        "properties": {
+          "id": {
+            "default": "audit",
+            "title": "Id",
+            "type": "string"
+          },
+          "title": {
+            "default": "Ivanti health audit",
+            "title": "Title",
+            "type": "string"
+          },
+          "kind": {
+            "default": "",
+            "title": "Kind",
+            "type": "string"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Subtitle"
+          },
+          "description": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Description"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Status"
+          },
+          "url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "title": "Url"
+          },
+          "open_incident_count": {
+            "default": 0,
+            "title": "Open Incident Count",
+            "type": "integer"
+          },
+          "open_service_request_count": {
+            "default": 0,
+            "title": "Open Service Request Count",
+            "type": "integer"
+          },
+          "open_problem_count": {
+            "default": 0,
+            "title": "Open Problem Count",
+            "type": "integer"
+          },
+          "open_change_count": {
+            "default": 0,
+            "title": "Open Change Count",
+            "type": "integer"
+          },
+          "raw": {
+            "additionalProperties": true,
+            "default": {},
+            "title": "Raw",
+            "type": "object"
+          }
+        },
+        "title": "HealthAudit",
+        "type": "object",
+        "x-sdl": "entity"
+      },
+      "event": "ivanti-connector.audit_instance_health",
+      "background": false,
+      "long_running": false,
+      "scopes": [],
+      "owner_chat_tool": "ivanti"
+    }
+  ],
+  "signals": [],
+  "schedules": [],
+  "required_scopes": [],
+  "icon_size_bytes": 698,
+  "lifecycle": {
+    "health_check": {
+      "interval_sec": 60
+    }
+  },
+  "secrets": [
+    {
+      "name": "ivanti_connections",
+      "description": "JSON list of connected Ivanti Service Manager tenants and encrypted credentials. Managed only through connect_ivanti and disconnect_ivanti.",
+      "required": true,
+      "write_mode": "both",
+      "max_bytes": 65536,
+      "scope": "user",
+      "rotation_hint_days": 90
+    }
+  ],
+  "panels": [
+    {
+      "panel_id": "secrets",
+      "slot": "right",
+      "title": "Secrets",
+      "tree": {},
+      "icon": "KeyRound",
+      "refresh": "manual",
+      "center_overlay": false
+    },
+    {
+      "panel_id": "ivanti_sidebar",
+      "slot": "left",
+      "title": "Ivanti",
+      "tree": {},
+      "icon": "",
+      "refresh": "manual",
+      "center_overlay": false
+    },
+    {
+      "panel_id": "ivanti_connect_help",
+      "slot": "center",
+      "title": "Connecting Ivanti",
+      "tree": {},
+      "icon": "HelpCircle",
+      "refresh": "manual",
+      "center_overlay": true
+    },
+    {
+      "panel_id": "ivanti_center",
+      "slot": "center",
+      "title": "Ivanti",
+      "tree": {},
+      "icon": "Ticket",
+      "refresh": "manual",
+      "center_overlay": true
+    },
+    {
+      "panel_id": "ivanti_settings",
+      "slot": "center",
+      "title": "Ivanti settings",
+      "tree": {},
+      "icon": "Settings",
+      "refresh": "manual",
+      "center_overlay": true
+    }
+  ]
+}
