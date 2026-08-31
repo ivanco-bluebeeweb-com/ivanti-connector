@@ -133,11 +133,13 @@ class ConnectionList(sdl.Entity):
 
 
 class DeleteResult(sdl.Entity):
+    title: str = ""
     id: str
     deleted: bool = True
 
 
 class Incident(sdl.Entity):
+    id: str = ""
     rec_id: str
     title: str
     subject: str = ""
@@ -153,6 +155,7 @@ class IncidentList(sdl.Entity):
 
 
 class ServiceRequest(sdl.Entity):
+    id: str = ""
     rec_id: str
     title: str
     subject: str = ""
@@ -167,6 +170,7 @@ class ServiceRequestList(sdl.Entity):
 
 
 class Problem(sdl.Entity):
+    id: str = ""
     rec_id: str
     title: str
     subject: str = ""
@@ -181,6 +185,7 @@ class ProblemList(sdl.Entity):
 
 
 class ChangeRequest(sdl.Entity):
+    id: str = ""
     rec_id: str
     title: str
     subject: str = ""
@@ -195,6 +200,7 @@ class ChangeRequestList(sdl.Entity):
 
 
 class ConfigItem(sdl.Entity):
+    id: str = ""
     rec_id: str
     title: str
     ci_type: str = ""
@@ -209,6 +215,7 @@ class ConfigItemList(sdl.Entity):
 
 
 class KnowledgeArticle(sdl.Entity):
+    id: str = ""
     rec_id: str
     title: str
     raw: dict = {}
@@ -221,6 +228,7 @@ class KnowledgeArticleList(sdl.Entity):
 
 
 class GenericRecord(sdl.Entity):
+    id: str = ""
     rec_id: str
     title: str
     raw: dict = {}
