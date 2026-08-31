@@ -115,7 +115,7 @@ async def disconnect_ivanti(ctx, params: DisconnectIvantiParams) -> ActionResult
 async def list_connections(ctx, params: NoParams) -> ActionResult:
     """Imperal action: list_connections."""
     connections = await _load_connections(ctx)
-    return ActionResult.success(data=ConnectionList(connections=[_connection_entity(c) for c in connections]))
+    return ActionResult.success(data=ConnectionList(connections=[_connection_entity(c) for c in connections]), summary="Connections listed.")
 
 
 def _to_incident(item: dict) -> Incident:
@@ -135,7 +135,7 @@ async def list_incidents(ctx, params: ListIncidentsParams) -> ActionResult:
         items = await client.list_incidents(odata_filter=params.odata_filter, limit=params.limit)
     except ic.IvantiError as exc:
         return ActionResult.error(str(exc), code="IVANTI_LIST_INCIDENTS_FAILED", retryable=exc.retryable)
-    return ActionResult.success(data=IncidentList(incidents=[_to_incident(i) for i in items]))
+    return ActionResult.success(data=IncidentList(incidents=[_to_incident(i) for i in items]), summary="Incidents listed.")
 
 
 @chat.function("get_incident", "Read one incident in full by record id.", action_type="read", chain_callable=True, data_model=Incident, event="ivanti-connector.get_incident")
@@ -146,7 +146,7 @@ async def get_incident(ctx, params: RecIdParams) -> ActionResult:
         item = await client.get_incident(params.rec_id)
     except ic.IvantiError as exc:
         return ActionResult.error(str(exc), code="IVANTI_GET_INCIDENT_FAILED", retryable=exc.retryable)
-    return ActionResult.success(data=_to_incident(item))
+    return ActionResult.success(data=_to_incident(item), summary="Incident retrieved.")
 
 
 @chat.function("create_incident", "Create a new incident.", action_type="write", chain_callable=True, data_model=Incident, event="ivanti-connector.create_incident", effects=["create:incident"])
@@ -186,7 +186,7 @@ async def list_service_requests(ctx, params: ListServiceRequestsParams) -> Actio
         items = await client.list_service_requests(odata_filter=params.odata_filter, limit=params.limit)
     except ic.IvantiError as exc:
         return ActionResult.error(str(exc), code="IVANTI_LIST_REQUESTS_FAILED", retryable=exc.retryable)
-    return ActionResult.success(data=ServiceRequestList(requests=[_to_request(i) for i in items]))
+    return ActionResult.success(data=ServiceRequestList(requests=[_to_request(i) for i in items]), summary="Service requests listed.")
 
 
 @chat.function("get_service_request", "Read one service request in full by record id.", action_type="read", chain_callable=True, data_model=ServiceRequest, event="ivanti-connector.get_service_request")
@@ -197,7 +197,7 @@ async def get_service_request(ctx, params: RecIdParams) -> ActionResult:
         item = await client.get_service_request(params.rec_id)
     except ic.IvantiError as exc:
         return ActionResult.error(str(exc), code="IVANTI_GET_REQUEST_FAILED", retryable=exc.retryable)
-    return ActionResult.success(data=_to_request(item))
+    return ActionResult.success(data=_to_request(item), summary="Service request retrieved.")
 
 
 @chat.function("create_service_request", "Create a new service request.", action_type="write", chain_callable=True, data_model=ServiceRequest, event="ivanti-connector.create_service_request", effects=["create:service_request"])
@@ -237,7 +237,7 @@ async def list_problems(ctx, params: ListProblemsParams) -> ActionResult:
         items = await client.list_problems(odata_filter=params.odata_filter, limit=params.limit)
     except ic.IvantiError as exc:
         return ActionResult.error(str(exc), code="IVANTI_LIST_PROBLEMS_FAILED", retryable=exc.retryable)
-    return ActionResult.success(data=ProblemList(problems=[_to_problem(i) for i in items]))
+    return ActionResult.success(data=ProblemList(problems=[_to_problem(i) for i in items]), summary="Problems listed.")
 
 
 @chat.function("create_problem", "Create a new problem record.", action_type="write", chain_callable=True, data_model=Problem, event="ivanti-connector.create_problem", effects=["create:problem"])
@@ -277,7 +277,7 @@ async def list_changes(ctx, params: ListChangesParams) -> ActionResult:
         items = await client.list_changes(odata_filter=params.odata_filter, limit=params.limit)
     except ic.IvantiError as exc:
         return ActionResult.error(str(exc), code="IVANTI_LIST_CHANGES_FAILED", retryable=exc.retryable)
-    return ActionResult.success(data=ChangeRequestList(changes=[_to_change(i) for i in items]))
+    return ActionResult.success(data=ChangeRequestList(changes=[_to_change(i) for i in items]), summary="Changes listed.")
 
 
 @chat.function("create_change", "Create a new change request.", action_type="write", chain_callable=True, data_model=ChangeRequest, event="ivanti-connector.create_change", effects=["create:change"])
@@ -312,7 +312,7 @@ async def list_cmdb_cis(ctx, params: ListCIsParams) -> ActionResult:
         return ActionResult.error(str(exc), code="IVANTI_LIST_CIS_FAILED", retryable=exc.retryable)
     return ActionResult.success(data=ConfigItemList(items=[
         ConfigItem(rec_id=str(i.get("RecId", "")), title=i.get("Name", str(i.get("RecId", ""))), ci_type=i.get("Type", ""), status=i.get("Status", ""), raw=i) for i in items
-    ]))
+    ]), summary="Cmdb cis listed.")
 
 
 @chat.function("list_knowledge_articles", "List knowledge base articles on the connected Ivanti tenant.", action_type="read", chain_callable=True, data_model=KnowledgeArticleList, event="ivanti-connector.list_knowledge_articles")
@@ -325,7 +325,7 @@ async def list_knowledge_articles(ctx, params: ListKnowledgeParams) -> ActionRes
         return ActionResult.error(str(exc), code="IVANTI_LIST_KNOWLEDGE_FAILED", retryable=exc.retryable)
     return ActionResult.success(data=KnowledgeArticleList(articles=[
         KnowledgeArticle(rec_id=str(i.get("RecId", "")), title=i.get("Subject", str(i.get("RecId", ""))), raw=i) for i in items
-    ]))
+    ]), summary="Knowledge articles listed.")
 
 
 @chat.function("list_table", "List records from any Ivanti Business Object by name -- a generic passthrough for objects not covered by typed wrappers.", action_type="read", chain_callable=True, data_model=GenericRecordList, event="ivanti-connector.list_table")
@@ -338,7 +338,7 @@ async def list_table(ctx, params: GenericBOParams) -> ActionResult:
         return ActionResult.error(str(exc), code="IVANTI_LIST_TABLE_FAILED", retryable=exc.retryable)
     return ActionResult.success(data=GenericRecordList(records=[
         GenericRecord(rec_id=str(i.get("RecId", "")), title=str(i.get("RecId", "")), raw=i) for i in items
-    ]))
+    ]), summary="Table listed.")
 
 
 @chat.function("get_record", "Read one record from any Ivanti Business Object by record id.", action_type="read", chain_callable=True, data_model=GenericRecord, event="ivanti-connector.get_record")
@@ -349,7 +349,7 @@ async def get_record(ctx, params: GenericRecordParams) -> ActionResult:
         item = await client.get_entry(params.bo_name, params.rec_id)
     except ic.IvantiError as exc:
         return ActionResult.error(str(exc), code="IVANTI_GET_RECORD_FAILED", retryable=exc.retryable)
-    return ActionResult.success(data=GenericRecord(rec_id=params.rec_id, title=params.rec_id, raw=item))
+    return ActionResult.success(data=GenericRecord(rec_id=params.rec_id, title=params.rec_id, raw=item), summary="Record retrieved.")
 
 
 @chat.function("create_record", "Create a new record on any Ivanti Business Object -- a generic passthrough for objects not covered by typed wrappers.", action_type="write", chain_callable=True, data_model=GenericRecord, event="ivanti-connector.create_record", effects=["create:record"])
