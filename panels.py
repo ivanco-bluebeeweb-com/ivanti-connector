@@ -37,14 +37,14 @@ async def ivanti_sidebar(ctx, **kwargs) -> ui.UINode:
     return ui.Stack(direction="v", gap=2, align="stretch", children=[
         ui.Text(label, variant="subtitle"),
         ui.Divider(),
-        ui.Button("Incidents", variant="ghost", full_width=True, on_click=ui.Call("__panel__ivanti_center", view="incidents")),
-        ui.Button("Service requests", variant="ghost", full_width=True, on_click=ui.Call("__panel__ivanti_center", view="requests")),
-        ui.Button("Problems", variant="ghost", full_width=True, on_click=ui.Call("__panel__ivanti_center", view="problems")),
-        ui.Button("Changes", variant="ghost", full_width=True, on_click=ui.Call("__panel__ivanti_center", view="changes")),
-        ui.Button("CMDB", variant="ghost", full_width=True, on_click=ui.Call("__panel__ivanti_center", view="cmdb")),
-        ui.Button("Knowledge", variant="ghost", full_width=True, on_click=ui.Call("__panel__ivanti_center", view="knowledge")),
+        ui.Button("Incidents", variant="ghost", on_click=ui.Call("__panel__ivanti_center", view="incidents")),
+        ui.Button("Service requests", variant="ghost", on_click=ui.Call("__panel__ivanti_center", view="requests")),
+        ui.Button("Problems", variant="ghost", on_click=ui.Call("__panel__ivanti_center", view="problems")),
+        ui.Button("Changes", variant="ghost", on_click=ui.Call("__panel__ivanti_center", view="changes")),
+        ui.Button("CMDB", variant="ghost", on_click=ui.Call("__panel__ivanti_center", view="cmdb")),
+        ui.Button("Knowledge", variant="ghost", on_click=ui.Call("__panel__ivanti_center", view="knowledge")),
         ui.Divider(),
-        ui.Button("App settings", variant="ghost", full_width=True, icon="Settings",
+        ui.Button("App settings", variant="ghost", icon="Settings",
                   on_click=ui.Call("__panel__ivanti_settings")),
     ])
 
